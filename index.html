@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Part 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">The Hitchhiker's Guide to the WFH in Shanghai</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Part 1</a>
+</li>
+<li>
+  <a href="part2.html">Part 2</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Part 1</h1>
+
+</div>
+
+
+<div id="background" class="section level2">
+<h2>Background</h2>
+<p>Ever since I started working remotely, some friends suggested “Why not work as usual as you travel across China, instead of staying in Shanghai?” Many cool people have practiced the lifestyle, but most of the time I would feel uncomfortable with it seeing as so much energy is consumed just adapting to new environment. I’d rather work at a familiar place, with reliable Internet connection. Luckily, I have the freedom to live where I love. I did the following GIS (geographical information systems) analysis to explore how to find my perfect home among a list of flat shares for rent across the city, with the help of geographical and other datasets.</p>
+<p>The dataset containing flat candidates is sourced from a local letting agency. They provide flat shares which have all been interior decorated with a simple IKEA style. The business has been popular lately among young adults.</p>
+<p>I figured out my top three priorities when choosing a location to rent a flat:</p>
+<ul>
+<li>CafÃ© density</li>
+<li>Tube station density</li>
+<li>Monthly rent</li>
+</ul>
+<p>To maintain creativity at work (not just for muffins), I like to work in cafÃ©s. That’s why the following questions are crucial: a) how far away is the nearest cafÃ© to my home and b) how many cafÃ©s are located in the vicinity. In this post cafÃ© or coffee shops indicate Starbucks and COSTA shops only.</p>
+<p>Secondly, the flat must be near public transportation. I tend to take the train much more frequently than the bus, and thus whether tube stations are within walking distance is an important consideration.</p>
+<p>Apart from the location, monthly rental is also an important factor. For simplicity reasons, I won’t control for Other features such as size, whether it’s south-facing, or with how many people I would share the flat.</p>
+</div>
+<div id="data-preparation" class="section level2">
+<h2>Data preparation</h2>
+<p>Address variable was selected from the dataset containing flat information, and then converted to grographic coordinates(i.e. latitude and longitude) using the baidumap package. It provides handy R interface to Baidu Maps APIs, a parallel to Google Maps APIs.</p>
+<p>In addition, the name, address and geographic coordinates for each coffee shop and tube station can be accessed through function getPlace. Longitudes and lattitudes are also available via function getCoordinate which takes address as argument. Mapping of tube lines took quite an effort, despite the tools provided in baidumap and REmap.</p>
+<p>To further tailor the flat data, I created anonymous names to represent flats, as they were shown in Chinese originally.</p>
+<pre><code>library(dplyr)
+library(baidumap)
+library(knitr)
+library(REmap)
+
+# load in flat, cafe and lines data objects
+load(&quot;data/sh_ziroom_location.rds&quot;)
+load(&quot;data/sh_cafe.rds&quot;)
+load(&quot;data/sh_lines.rds&quot;)
+
+# logitude and latitude of COSTA
+sh_costa &lt;- getPlace(&#39;COSTA&#39;, &#39;ä¸Šæµ·&#39;) %&gt;%
+  select(lon, lat, name)
+
+# logitude and latitude of Stubucks
+sh_starbucks &lt;- getPlace(&#39;Starbucks&#39;, &#39;ä¸Šæµ·&#39;) %&gt;%
+  select(lon, lat, name)
+
+sh_cafe &lt;- rbind(sh_costa, sh_starbucks)
+
+# logitude and latitude of tube stations
+sh_station &lt;- getPlace(&#39;åœ°é“ç«™&#39;, &#39;ä¸Šæµ·&#39;) %&gt;%
+  select(lon, lat, name)
+
+# logitude and latitude of flat
+sh_ziroom &lt;- ziroom %&gt;%
+  mutate(name=paste(&quot;Room&quot;, rownames(ziroom), sep=&quot;_&quot;)) %&gt;%
+  mutate(lon=getCoordinate(flat, city=&quot;ä¸Šæµ·&quot;, formatted = T)[, &#39;longtitude&#39;]) %&gt;%
+  mutate(lat=getCoordinate(flat, city=&quot;ä¸Šæµ·&quot;, formatted = T)[, &#39;latitude&#39;]) %&gt;%
+  na.omit() %&gt;%
+  select(c(lon, lat, name, price_promotion, flat))
+
+sh_ziroom_location &lt;- sh_ziroom %&gt;%
+  distinct(flat) %&gt;%
+  select(c(lon, lat, name))</code></pre>
+</div>
+<div id="map-visualization" class="section level2">
+<h2>Map visualization</h2>
+<p>I wanted to interactively view the points on map before processing the calculation. Thankfully the REmap package provides a convenient R wrapper to the JavaScript library ECharts. As you can see on the interactive map, the yellow and blue pins represent flats and coffee shops, respectively. The lines in random colours indicate tube lines.</p>
+<pre><code>sh_cafe_room &lt;- rbind(sh_cafe, sh_ziroom_location)
+pointData &lt;- data.frame(sh_cafe_room$name,
+  color = c(rep(&quot;skyblue&quot;, nrow(sh_cafe)),
+  rep(&quot;orange&quot;, nrow(sh_ziroom_location))))
+
+# Initialise
+remap.init()
+
+# Draw the map
+pic &lt;-  remapB(get_city_coord(&quot;ä¸Šæµ·&quot;),
+  zoom = 14,
+  color = &quot;Blue&quot;,
+  title = &quot;REmap: cafe, flat and lines&quot;,
+  markPointData = pointData,
+  markPointTheme = markPointControl(symbol = &#39;pin&#39;,
+  symbolSize = 4,
+  effect = F),
+  markLineData = sh_lines[[2]],
+  markLineTheme = markLineControl(symbolSize = c(0,0),
+  smoothness = 0),
+  geoData = rbind(sh_cafe_room, sh_lines[[1]]))
+
+## knitr to display
+knitrREmap(pic, height=&quot;500px&quot;, local=F)</code></pre>
+<p>Existing property search tools lack flexibility to quantify geographic and contextual information. Visualization of points is helpful, but certainly we data scientists can do better. I’ll show in a second post how top 10 candidates ordered by score are generated, and how this calculation is implemented in R. If you’ve not been scared away by the few Chinese characters, stay tuned!</p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

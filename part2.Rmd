@@ -1,0 +1,105 @@
+---
+title: "Part 2"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Recap
+
+In part 1 of this post I set out to find a flat to rent based on three simple criteria:
+
+- Café density
+- Tube station density
+- Monthly rent
+
+So far I have made use of the baidumap and REmap packages to create a nice visualisation of available flats and coffee shops in Shanghai.
+
+## Calculation and scoring
+
+Now let’s do some basic math and programming. Three measures ( derived from original variables to quantify my preferences.
+
+For density of café and tube station, the closer the better; the more the better. Geographic distances were calculated by function distm from package geosphere.
+
+```
+library(dplyr)
+library(geosphere)
+library(knitr)
+library(baidumap)
+
+load('data/ziroom.rds') # raw data
+load("data/sh_cafe.rds")
+load("data/sh_station.rds")
+
+# 1. Generate names to represent flats
+# 2. Extract longitude and lattitude
+sh_ziroom <- ziroom %>%
+mutate(name=paste("Room", rownames(ziroom), sep="_")) %>%
+mutate(lon=getCoordinate(flat, city="上海", formatted = T)[, 'longtitude']) %>%
+mutate(lat=getCoordinate(flat, city="上海", formatted = T)[, 'latitude']) %>%
+na.omit() %>%
+select(c(lon, lat, name, price_promotion, flat))
+
+# distance matrices: between cafe and flat, between station and flat
+
+dist_cafe_flat <- distm(sh_cafe[,c("lon", "lat")], sh_ziroom[,c("lon", "lat")]) %>%
+
+as.data.frame()
+
+dist_station_flat <- distm(sh_station[,c("lon", "lat")], sh_ziroom[,c("lon", "lat")]) %>%
+
+as.data.frame()
+```
+
+As an upper limit I’m willing to walk as far as 750 metres (about 0.5 mile) from a café. Thus, cafeidx and stationidx were then given by
+
+For this job I wrote a small custom function called calIdx.
+
+```
+# Function to calculate cafe_idx and station_idx
+
+calIdx <- function(tmpcol) {
+
+tmpcol <- tmpcol[which(tmpcol < 750)]
+
+return(sum(1/log(tmpcol)))
+
+}
+```
+
+Rent is a negative indicator, and so rentidx could be obtained from
+
+The weighted score was calculated by
+
+```
+# 1. cafeIdx = 1/log(dis1) + 1/log(dis2) +...+ 1/log(disN)
+
+# 2. stationIdx = 1/log(dis1) + 1/log(dis2) +...+ 1/log(disN)
+
+# 3. rentIdx = 1/log(price_promotion)
+
+# 4. score = 0.3*cafeIdx + 0.2*stationIdx + 0.5*rentIdx
+
+sh_ziroom_top10 <- sh_ziroom %>%
+
+mutate(cafeIdx = sapply(dist_cafe_flat, calIdx)) %>%
+
+mutate(stationIdx = sapply(dist_station_flat, calIdx)) %>%
+
+filter(price_promotion <= 4000) %>%
+
+mutate(rentIdx = 1/log(as.numeric(price_promotion))) %>%
+
+mutate(score = 0.4*cafeIdx + 0.2*stationIdx + 0.4*rentIdx) %>%
+
+arrange(desc(score)) %>%
+
+slice(1:10)
+```
+
+## Summary
+```
+kable(sh_ziroom_top10[, c("name", "score", "cafeIdx", "stationIdx", "rentIdx")], align="c")
+```
+Done! See above for the top 10 room candidates. The mechanism I used is not difficult and makes my life so much easier. Moving to a new area which fulfils all my social needs is no longer such a big challenge!

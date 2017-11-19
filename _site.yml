@@ -1,7 +1,9 @@
-name: "my-website"
+name: "The Hitchhiker's Guide to WFH in Shanghai"
 output_dir: "."
 navbar:
-  title: "My Website"
+  title: "The Hitchhiker's Guide to WFH in Shanghai"
   left:
-    - text: "Home"
-      href: Home.html
+    - text: "Part 1"
+      href: index.html
+    - text: "Part 2"
+      href: part2.html

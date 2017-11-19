@@ -1,0 +1,103 @@
+---
+title: "Part 1"
+---
+
+## Background
+
+Ever since I started working remotely, some friends suggested "Why not work as usual as you travel across China, instead of staying in Shanghai?" Many cool people have practiced the lifestyle, but most of the time I would feel uncomfortable with it seeing as so much energy is consumed just adapting to new environment. I'd rather work at a familiar place, with reliable Internet connection. Luckily, I have the freedom to live where I love. I did the following GIS (geographical information systems) analysis to explore how to find my perfect home among a list of flat shares for rent across the city, with the help of geographical and other datasets.
+
+The dataset containing flat candidates is sourced from a local letting agency. They provide flat shares which have all been interior decorated with a simple IKEA style. The business has been popular lately among young adults.
+
+I figured out my top three priorities when choosing a location to rent a flat:
+
+- Café density
+- Tube station density
+- Monthly rent
+
+To maintain creativity at work (not just for muffins), I like to work in cafés. That's why the following questions are crucial: a) how far away is the nearest café to my home and b) how many cafés are located in the vicinity. In this post café or coffee shops indicate Starbucks and COSTA shops only.
+
+Secondly, the flat must be near public transportation. I tend to take the train much more frequently than the bus, and thus whether tube stations are within walking distance is an important consideration.
+
+Apart from the location, monthly rental is also an important factor. For simplicity reasons, I won't control for Other features such as size, whether it's south-facing, or with how many people I would share the flat.
+
+## Data preparation
+
+Address variable was selected from the dataset containing flat information, and then converted to grographic coordinates(i.e. latitude and longitude) using the baidumap package. It provides handy R interface to Baidu Maps APIs, a parallel to Google Maps APIs.
+
+In addition, the name, address and geographic coordinates for each coffee shop and tube station can be accessed through function getPlace. Longitudes and lattitudes are also available via function getCoordinate which takes address as argument. Mapping of tube lines took quite an effort, despite the tools provided in baidumap and REmap.
+
+To further tailor the flat data, I created anonymous names to represent flats, as they were shown in Chinese originally.
+
+
+```
+library(dplyr)
+library(baidumap)
+library(knitr)
+library(REmap)
+
+# load in flat, cafe and lines data objects
+load("data/sh_ziroom_location.rds")
+load("data/sh_cafe.rds")
+load("data/sh_lines.rds")
+
+# logitude and latitude of COSTA
+sh_costa <- getPlace('COSTA', '上海') %>%
+  select(lon, lat, name)
+
+# logitude and latitude of Stubucks
+sh_starbucks <- getPlace('Starbucks', '上海') %>%
+  select(lon, lat, name)
+
+sh_cafe <- rbind(sh_costa, sh_starbucks)
+
+# logitude and latitude of tube stations
+sh_station <- getPlace('地铁站', '上海') %>%
+  select(lon, lat, name)
+
+# logitude and latitude of flat
+sh_ziroom <- ziroom %>%
+  mutate(name=paste("Room", rownames(ziroom), sep="_")) %>%
+  mutate(lon=getCoordinate(flat, city="上海", formatted = T)[, 'longtitude']) %>%
+  mutate(lat=getCoordinate(flat, city="上海", formatted = T)[, 'latitude']) %>%
+  na.omit() %>%
+  select(c(lon, lat, name, price_promotion, flat))
+
+sh_ziroom_location <- sh_ziroom %>%
+  distinct(flat) %>%
+  select(c(lon, lat, name))
+```
+
+
+## Map visualization
+
+I wanted to interactively view the points on map before processing the calculation. Thankfully the REmap package provides a convenient R wrapper to the JavaScript library ECharts. As you can see on the interactive map, the yellow and blue pins represent flats and coffee shops, respectively. The lines in random colours indicate tube lines.
+
+```
+sh_cafe_room <- rbind(sh_cafe, sh_ziroom_location)
+pointData <- data.frame(sh_cafe_room$name,
+  color = c(rep("skyblue", nrow(sh_cafe)),
+  rep("orange", nrow(sh_ziroom_location))))
+
+# Initialise
+remap.init()
+
+# Draw the map
+pic <-  remapB(get_city_coord("上海"),
+  zoom = 14,
+  color = "Blue",
+  title = "REmap: cafe, flat and lines",
+  markPointData = pointData,
+  markPointTheme = markPointControl(symbol = 'pin',
+  symbolSize = 4,
+  effect = F),
+  markLineData = sh_lines[[2]],
+  markLineTheme = markLineControl(symbolSize = c(0,0),
+  smoothness = 0),
+  geoData = rbind(sh_cafe_room, sh_lines[[1]]))
+
+## knitr to display
+knitrREmap(pic, height="500px", local=F)
+```
+
+
+Existing property search tools lack flexibility to quantify geographic and contextual information. Visualization of points is helpful, but certainly we data scientists can do better. I'll show in a second post how top 10 candidates ordered by score are generated, and how this calculation is implemented in R. If you've not been scared away by the few Chinese characters, stay tuned!
